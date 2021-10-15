@@ -164,7 +164,7 @@ def load_nodes():
 
 
 def load_movie_titles():
-    with open("../imdb_movies.txt", "r") as f:
+    with open("movies.txt", "r") as f:
         movies = f.read().split("\n")
     for i in range(len(movies)):
         movies[i] = movies[i].strip()

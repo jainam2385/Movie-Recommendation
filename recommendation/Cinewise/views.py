@@ -1,3 +1,4 @@
+from utils.Movies import load_nodes
 from django.shortcuts import render, redirect
 from dal import autocomplete
 from .models import Node
@@ -25,7 +26,7 @@ def home(request):
             nodes)
         print(union_colors_results)
         print(energy_spread_results)
-        return render(request, "cinewise/results.html",
+        return render(request, "cinewise/result.html",
                       {"union_colors_results": union_colors_results, "energy_spread_results": energy_spread_results})
     else:
         form = UserInputForm()
