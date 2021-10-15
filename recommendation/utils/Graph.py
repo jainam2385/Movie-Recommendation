@@ -1,7 +1,8 @@
+from operator import itemgetter
+from collections import OrderedDict, deque
 from .Movies import load_movies_data, load_movie_titles, Movie
 import pickle
-from operator import itemgetter
-from collections import OrderedDict
+import time
 
 
 def create_graph():
@@ -64,7 +65,7 @@ def union_colors(graph, nodes):
     # Initialize required variables
     colors = {}
     visited = {}
-    queue = []
+    queue = deque([])
     parent = {}
     size = {}
     color_parent = {}
@@ -96,7 +97,7 @@ def union_colors(graph, nodes):
         new_queue = []
         while i != 0:
             while len(queue) != 0:
-                node, parent_node = queue.pop(0)
+                node, parent_node = queue.popleft()
                 visited[node] = True
                 for neighbour in graph[node]:
                     try:
@@ -116,7 +117,7 @@ def union_colors(graph, nodes):
         return results
 
     while n_colors != 1:
-        node, parent_node = queue.pop(0)  # Dequeue a node and visit it
+        node, parent_node = queue.popleft()  # Dequeue a node and visit it
         visited[node] = True
         color = None
         try:
@@ -166,7 +167,7 @@ def energy_spread(graph, nodes):
     energy_values = {}  # Energies of initial nodes
     neighbor_energy_values = {}  # Energies of neighbors of initial nodes
     visited = {}
-    queue = []
+    queue = deque([])
     parent = {}
     movie_titles = load_movie_titles()
     for node in nodes:
@@ -176,7 +177,7 @@ def energy_spread(graph, nodes):
         parent[node] = node
     for i in range(len(nodes)):
         # print(queue)
-        node = queue.pop(0)
+        node = queue.popleft()
         visited[node] = True
         for neighbor in graph[node]:
             energy_value = None
@@ -220,7 +221,11 @@ def gen_recommendations(nodes):
     union_colors_results = []
     energy_spread_results = []
 
+    start = time.time()
     color_ord = union_colors(graph, nodes)
+    end = time.time()
+
+    print("Union Colors:", (end - start), "ms")
     print("Results using union colors: ")
     for node in color_ord:
         if node in movies:
@@ -230,7 +235,12 @@ def gen_recommendations(nodes):
             if count >= 5:
                 break
 
+    start = time.time()
     results = energy_spread(graph, nodes)
+    end = time.time()
+
+    print("Energy Spread:", (end - start), "ms")
+
     print("\n\nResults using energy spreading: ")
     count = 0
     for node, energy in reversed(results.items()):
